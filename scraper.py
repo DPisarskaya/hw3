@@ -20,7 +20,7 @@
 # In[1]:
 
 
-#get_ipython().system('pip install -q schedule pytest')
+get_ipython().system('pip install -q schedule pytest')
 # установка библиотек, если ещё не
 
 
@@ -394,7 +394,7 @@ def run_scheduler(test_time: str = None):
 # **Не забывайте про соблюдение PEP-8**
 # 
 
-# In[8]:
+# In[ ]:
 
 
 # Ячейка для демонстрации работоспособности
@@ -404,9 +404,11 @@ get_ipython().system(' pytest C:\\Users\\dpisarskay001\\Desktop\\hw3\\tests/test
 
 # In[9]:
 
+
 # import pytest
 # import sys
 # import os
+# import time
 
 # # Добавляем путь для импорта
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -424,10 +426,17 @@ get_ipython().system(' pytest C:\\Users\\dpisarskay001\\Desktop\\hw3\\tests/test
         
 #         # Используем известную рабочую книгу для тестирования
 #         test_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
-        
+
+#         # Добавляем задержку перед запросом
+#         time.sleep(1)        
+
 #         # Вызываем метод класса
 #         result = scraper.get_book_data(test_url)
-        
+
+#         # Пропускаем тест если нет соединения
+#         if result is None:
+#             pytest.skip("Нет соединения с сайтом, пропускаем тест")
+
 #         # Проверяем, что результат - словарь
 #         assert isinstance(result, dict)
         
@@ -444,8 +453,13 @@ get_ipython().system(' pytest C:\\Users\\dpisarskay001\\Desktop\\hw3\\tests/test
 #         scraper = BookScraper()
 #         test_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
         
+#         time.sleep(1)  # Задержка
+        
 #         result = scraper.get_book_data(test_url)
         
+#         if result is None:
+#             pytest.skip("Нет соединения с сайтом, пропускаем тест")
+
 #         # Проверяем конкретные значения
 #         assert result['title'] == "A Light in the Attic"
 #         assert result['url'] == test_url
@@ -460,10 +474,15 @@ get_ipython().system(' pytest C:\\Users\\dpisarskay001\\Desktop\\hw3\\tests/test
         
 #         # Используем тестовую категорию
 #         test_category_url = "http://books.toscrape.com/catalogue/category/books/travel_2/index.html"
-        
+
+#         time.sleep(1)  # Задержка    
+    
 #         # Вызываем метод с ограничением количества книг
 #         result = scraper.scrape_books(test_category_url, max_books=3)
         
+#         if 'error' in result:
+#             pytest.skip(f"Ошибка при запросе: {result['error']}")
+
 #         # Проверяем структуру результата
 #         assert isinstance(result, dict)
 #         assert 'books' in result
@@ -516,7 +535,14 @@ get_ipython().system(' pytest C:\\Users\\dpisarskay001\\Desktop\\hw3\\tests/test
 #         # Проверяем обработку ошибки
 #         assert isinstance(result, dict)
 #         assert 'error' in result
-   
+
+# if __name__ == "__main__":
+#     # Код выполняется только при прямом запуске файла
+#     res = scrape_books(is_save=True)
+# else:
+#     # При импорте ничего не выполняется
+#     pass
+
 
 # ## Задание 5. Оформление проекта на GitHub и работа с Git (35 баллов)
 # 
