@@ -335,41 +335,46 @@ print(type(res), len(res)) # и проверки
 
 # НАЧАЛО ВАШЕГО РЕШЕНИЯ
 
-def scheduled_task():
+import schedule
+import time
+
+def scheduled_scraping():
     """
-    Задача, которая выполняется по расписанию.
-    Собирает данные и сохраняет их в файл.
+    Функция для автоматического запуска парсинга по расписанию
     """
-    print("Запуск scheduled_task() - сбор данных о книгах...")
+    print(" Запуск автоматического парсинга...")
     
     try:
-        # Получаем данные о книгах
-        books_data = get_book_data()
-        
-        # Сохраняем данные в файл
-        save_books_to_file(books_data)
-        
-        print("Задача scheduled_task() завершена успешно!")
+        # Запускаем парсинг с сохранением в файл
+        books_data = scrape_books(is_save=True)
+        print(f" Парсинг успешно завершен! Обработано {len(books_data)} книг")
         
     except Exception as e:
-        print(f"Ошибка при выполнении scheduled_task: {e}")
+        print(f" Ошибка при автоматическом парсинге: {e}")
 
-# Настраиваем расписание
-# Запуск каждый день в 21:40
-schedule.every().day.at("21:40").do(scheduled_task)
-
-print("Планировщик запущен!")
-print("Ожидание выполнения задачи в 21:40...")
-print("Для остановки нажмите Ctrl+C")
-
-# Бесконечный цикл для проверки расписания
-while True:
-    try:
+def run_scheduler(test_time: str = None):
+    """
+    Запускает планировщик задач
+    
+    Args:
+        test_time (str): Время для тестирования в формате "HH:MM"
+    """
+    # Настраиваем расписание
+    if test_time:
+        # Тестовый режим - запуск в указанное время
+        print(f" Настроен тестовый запуск в {test_time}")
+        schedule.every().day.at(test_time).do(scheduled_scraping)
+    else:
+        # Режим работы - запуск каждый день в 19:00
+        print(" Настроен ежедневный запуск в 19:00")
+        schedule.every().day.at("19:00").do(scheduled_scraping)
+    
+    print(" Планировщик запущен. Ожидание выполнения задач...")
+    
+    # Бесконечный цикл
+    while True:
         schedule.run_pending()
-        time.sleep(60)  # Проверяем каждую минуту
-    except KeyboardInterrupt:
-        print("\nПланировщик остановлен пользователем")
-        break
+        time.sleep(60)  # Проверяем каждые 60 секунд
 
 # КОНЕЦ ВАШЕГО РЕШЕНИЯ
 
@@ -399,120 +404,119 @@ get_ipython().system(' pytest C:\\Users\\dpisarskay001\\Desktop\\hw3\\tests/test
 
 # In[9]:
 
+# import pytest
+# import sys
+# import os
 
-import pytest
-import sys
-import os
+# # Добавляем путь для импорта
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Добавляем путь для импорта
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# from scraper import BookScraper
 
-from scraper import BookScraper
-
-class TestGetBookData:
-    """Тесты для метода get_book_data"""
+# class TestGetBookData:
+#     """Тесты для метода get_book_data"""
     
-    def test_returns_dict_with_required_keys(self):
-        """Проверяет, что функция возвращает словарь с нужными ключами"""
+#     def test_returns_dict_with_required_keys(self):
+#         """Проверяет, что функция возвращает словарь с нужными ключами"""
         
-        # Создаем экземпляр класса
-        scraper = BookScraper()
+#         # Создаем экземпляр класса
+#         scraper = BookScraper()
         
-        # Используем известную рабочую книгу для тестирования
-        test_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+#         # Используем известную рабочую книгу для тестирования
+#         test_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
         
-        # Вызываем метод класса
-        result = scraper.get_book_data(test_url)
+#         # Вызываем метод класса
+#         result = scraper.get_book_data(test_url)
         
-        # Проверяем, что результат - словарь
-        assert isinstance(result, dict)
+#         # Проверяем, что результат - словарь
+#         assert isinstance(result, dict)
         
-        # Проверяем наличие всех обязательных ключей
-        required_keys = [
-            'title', 'price', 'rating', 'availability', 'description'
-        ]
+#         # Проверяем наличие всех обязательных ключей
+#         required_keys = [
+#             'title', 'price', 'rating', 'availability', 'description'
+#         ]
         
-        for key in required_keys:
-            assert key in result, f"Ключ '{key}' отсутствует в результате"
+#         for key in required_keys:
+#             assert key in result, f"Ключ '{key}' отсутствует в результате"
     
-    def test_book_data_values_correct(self):
-        """Проверяет корректность значений полей"""
-        scraper = BookScraper()
-        test_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+#     def test_book_data_values_correct(self):
+#         """Проверяет корректность значений полей"""
+#         scraper = BookScraper()
+#         test_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
         
-        result = scraper.get_book_data(test_url)
+#         result = scraper.get_book_data(test_url)
         
-        # Проверяем конкретные значения
-        assert result['title'] == "A Light in the Attic"
-        assert result['url'] == test_url
+#         # Проверяем конкретные значения
+#         assert result['title'] == "A Light in the Attic"
+#         assert result['url'] == test_url
 
-class TestScrapeBooks:
-    """Тесты для метода scrape_books"""
+# class TestScrapeBooks:
+#     """Тесты для метода scrape_books"""
     
-    def test_returns_list_of_books(self):
-        """Проверяет, что функция возвращает список книг"""
+#     def test_returns_list_of_books(self):
+#         """Проверяет, что функция возвращает список книг"""
         
-        scraper = BookScraper()
+#         scraper = BookScraper()
         
-        # Используем тестовую категорию
-        test_category_url = "http://books.toscrape.com/catalogue/category/books/travel_2/index.html"
+#         # Используем тестовую категорию
+#         test_category_url = "http://books.toscrape.com/catalogue/category/books/travel_2/index.html"
         
-        # Вызываем метод с ограничением количества книг
-        result = scraper.scrape_books(test_category_url, max_books=3)
+#         # Вызываем метод с ограничением количества книг
+#         result = scraper.scrape_books(test_category_url, max_books=3)
         
-        # Проверяем структуру результата
-        assert isinstance(result, dict)
-        assert 'books' in result
-        assert 'total_books' in result
+#         # Проверяем структуру результата
+#         assert isinstance(result, dict)
+#         assert 'books' in result
+#         assert 'total_books' in result
         
-        # Проверяем, что books - это список
-        assert isinstance(result['books'], list)
-        assert len(result['books']) > 0
-        assert result['total_books'] == len(result['books'])
+#         # Проверяем, что books - это список
+#         assert isinstance(result['books'], list)
+#         assert len(result['books']) > 0
+#         assert result['total_books'] == len(result['books'])
     
-    def test_returns_expected_number_of_books(self):
-        """Проверяет, что возвращается ожидаемое количество книг"""
-        scraper = BookScraper()
-        test_category_url = "http://books.toscrape.com/catalogue/category/books/travel_2/index.html"
+#     def test_returns_expected_number_of_books(self):
+#         """Проверяет, что возвращается ожидаемое количество книг"""
+#         scraper = BookScraper()
+#         test_category_url = "http://books.toscrape.com/catalogue/category/books/travel_2/index.html"
         
-        # Запрашиваем 2 книги
-        result = scraper.scrape_books(test_category_url, max_books=2)
+#         # Запрашиваем 2 книги
+#         result = scraper.scrape_books(test_category_url, max_books=2)
         
-        assert result['total_books'] == 2
-        assert len(result['books']) == 2
+#         assert result['total_books'] == 2
+#         assert len(result['books']) == 2
         
-        # Проверяем, что каждая книга - словарь с нужными ключами
-        for book in result['books']:
-            assert isinstance(book, dict)
-            assert 'title' in book
-            assert 'price' in book
+#         # Проверяем, что каждая книга - словарь с нужными ключами
+#         for book in result['books']:
+#             assert isinstance(book, dict)
+#             assert 'title' in book
+#             assert 'price' in book
 
-class TestEdgeCases:
-    """Тесты для крайних случаев"""
+# class TestEdgeCases:
+#     """Тесты для крайних случаев"""
     
-    def test_invalid_url_handling(self):
-        """Проверяет обработку неверного URL"""
-        scraper = BookScraper()
-        invalid_url = "http://invalid-url-that-does-not-exist.com"
+#     def test_invalid_url_handling(self):
+#         """Проверяет обработку неверного URL"""
+#         scraper = BookScraper()
+#         invalid_url = "http://invalid-url-that-does-not-exist.com"
         
-        result = scraper.get_book_data(invalid_url)
+#         result = scraper.get_book_data(invalid_url)
         
-        # Проверяем, что возвращается словарь с ошибкой
-        assert isinstance(result, dict)
-        assert 'error' in result
+#         # Проверяем, что возвращается словарь с ошибкой
+#         assert isinstance(result, dict)
+#         assert 'error' in result
     
-    def test_empty_category(self):
-        """Проверяет обработку пустой категории"""
-        scraper = BookScraper()
-        # Используем несуществующую категорию
-        invalid_category_url = "http://books.toscrape.com/catalogue/category/books/invalid_category/index.html"
+#     def test_empty_category(self):
+#         """Проверяет обработку пустой категории"""
+#         scraper = BookScraper()
+#         # Используем несуществующую категорию
+#         invalid_category_url = "http://books.toscrape.com/catalogue/category/books/invalid_category/index.html"
         
-        result = scraper.scrape_books(invalid_category_url)
+#         result = scraper.scrape_books(invalid_category_url)
         
-        # Проверяем обработку ошибки
-        assert isinstance(result, dict)
-        assert 'error' in result    
-
+#         # Проверяем обработку ошибки
+#         assert isinstance(result, dict)
+#         assert 'error' in result
+   
 
 # ## Задание 5. Оформление проекта на GitHub и работа с Git (35 баллов)
 # 
