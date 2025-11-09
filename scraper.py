@@ -20,7 +20,7 @@
 # In[1]:
 
 
-get_ipython().system('pip install -q schedule pytest')
+# get_ipython().system('pip install -q schedule pytest')
 # установка библиотек, если ещё не
 
 
